@@ -14,7 +14,7 @@ fi
 mkdir -p /var/www/html/database
 touch /var/www/html/database/database.sqlite
 
-# Force SQLite, File drivers, and HTTPS APP_URL in .env
+# Force SQLite and drivers in .env
 sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
 sed -i 's|^DB_DATABASE=.*|DB_DATABASE=/var/www/html/database/database.sqlite|' .env
 sed -i 's/^SESSION_DRIVER=.*/SESSION_DRIVER=file/' .env
