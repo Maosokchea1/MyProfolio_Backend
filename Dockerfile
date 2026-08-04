@@ -47,5 +47,9 @@ RUN cp .env.example .env \
     && chmod -R 777 storage bootstrap/cache \
     && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Start Apache in foreground
-CMD ["apache2-foreground"]
+# Copy and give execute permission to start script
+COPY start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
+# Start using script
+CMD ["/usr/local/bin/start.sh"]
