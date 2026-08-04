@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Experience;
+use Illuminate\Http\JsonResponse;
+
+class ExperienceController extends Controller
+{
+    public function index(): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'data' => Experience::query()->latest('start_date')->get(),
+        ]);
+    }
+}
