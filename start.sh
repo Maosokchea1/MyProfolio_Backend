@@ -14,16 +14,17 @@ fi
 mkdir -p /var/www/html/database
 touch /var/www/html/database/database.sqlite
 
-# Force SQLite and File drivers in .env
+# Force SQLite, File drivers, and HTTPS APP_URL in .env
 sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
 sed -i 's|^DB_DATABASE=.*|DB_DATABASE=/var/www/html/database/database.sqlite|' .env
 sed -i 's/^SESSION_DRIVER=.*/SESSION_DRIVER=file/' .env
 sed -i 's/^CACHE_STORE=.*/CACHE_STORE=file/' .env
+sed -i 's|^APP_URL=.*|APP_URL=https://myprofolio-backend-sk.onrender.com|' .env
 
 # Set proper permissions
 chmod -R 777 storage database bootstrap/cache
 
-# Clear ALL cached files so Laravel reads the fresh .env values
+# Clear ALL cached files so Laravel reads fresh values
 php artisan optimize:clear
 php artisan config:clear
 php artisan cache:clear
