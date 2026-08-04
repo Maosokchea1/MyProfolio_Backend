@@ -21,12 +21,26 @@ WORKDIR /var/www/html
 # Copy project files
 COPY . /var/www/html
 
-# Set proper permissions for Laravel
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Point Apache DocumentRoot to Laravel's public directory
+RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
+
+# Add Directory permissions to Apache config to fix 403 Forbidden
+RUN echo '<Directory /var/www/html/public>\n\
+    Options Indexes FollowSymLinks\n\
+    AllowOverride All\n\
+    Require all granted\n\
+</Directory>' >> /etc/apache2/apache2.conf
+
+# Set proper permissions for Laravel storage and cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Expose port 8080 (Render requirement)
 ENV PORT=8080
 RUN sed -i 's/80/8080/g' /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
+
+# Enable Apache Rewrite Module for Laravel routing
+RUN a2enmod rewrite
 
 # Install PHP dependencies via composer
 RUN composer install --no-dev --optimize-autoloader
