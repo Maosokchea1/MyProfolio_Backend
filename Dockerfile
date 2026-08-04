@@ -41,11 +41,13 @@ RUN a2enmod rewrite
 # Install PHP dependencies via composer
 RUN composer install --no-dev --optimize-autoloader
 
-# Setup Laravel .env and permissions
+# Setup Laravel .env, create sqlite database file, and set permissions
 RUN cp .env.example .env \
+    && mkdir -p database \
+    && touch database/database.sqlite \
     && php artisan key:generate \
-    && chmod -R 777 storage bootstrap/cache \
-    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+    && chmod -R 777 storage database bootstrap/cache \
+    && chown -R www-data:www-data /var/www/html/storage /var/www/html/database /var/www/html/bootstrap/cache
 
 # Copy and give execute permission to start script
 COPY start.sh /usr/local/bin/start.sh
