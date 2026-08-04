@@ -10,11 +10,11 @@ if [ ! -f .env ]; then
     php artisan key:generate
 fi
 
-# Make sure database directory exists and touch sqlite file with absolute path
+# Make sure database directory exists and touch sqlite file
 mkdir -p /var/www/html/database
 touch /var/www/html/database/database.sqlite
 
-# Force SQLite configuration and file drivers in .env
+# Force SQLite and File drivers in .env
 sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
 sed -i 's|^DB_DATABASE=.*|DB_DATABASE=/var/www/html/database/database.sqlite|' .env
 sed -i 's/^SESSION_DRIVER=.*/SESSION_DRIVER=file/' .env
@@ -23,11 +23,14 @@ sed -i 's/^CACHE_STORE=.*/CACHE_STORE=file/' .env
 # Set proper permissions
 chmod -R 777 storage database bootstrap/cache
 
-# Clear cache and run migrations
+# Clear ALL cached files so Laravel reads the fresh .env values
+php artisan optimize:clear
 php artisan config:clear
 php artisan cache:clear
 php artisan route:clear
 php artisan view:clear
+
+# Run migration
 php artisan migrate --force || true
 
 apache2-foreground
