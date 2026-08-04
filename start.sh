@@ -24,12 +24,15 @@ sed -i 's|^APP_URL=.*|APP_URL=https://myprofolio-backend-sk.onrender.com|' .env
 # Set proper permissions
 chmod -R 777 storage database bootstrap/cache
 
-# Clear ALL cached files so Laravel reads fresh values
+# Clear ALL cached files
 php artisan optimize:clear
 php artisan config:clear
 php artisan cache:clear
 php artisan route:clear
 php artisan view:clear
+
+# Create storage symbolic link to make files publicly accessible
+php artisan storage:link --force
 
 # Run migration
 php artisan migrate --force || true
