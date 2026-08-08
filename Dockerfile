@@ -35,8 +35,11 @@ RUN echo '<Directory /var/www/html/public>\n\
 ENV PORT=8080
 RUN sed -i 's/80/8080/g' /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
 
-# Fix Apache MPM conflict and Enable Rewrite Module
-RUN a2dismod mpm_event mpm_worker && a2enmod mpm_prefork && a2enmod rewrite
+# Force fix Apache MPM conflict and Enable Rewrite Module
+RUN rm -f /etc/apache2/mods-enabled/mpm_event.* /etc/apache2/mods-enabled/mpm_worker.* \
+    && ln -sf /etc/apache2/mods-available/mpm_prefork.load /etc/apache2/mods-enabled/ \
+    && ln -sf /etc/apache2/mods-available/mpm_prefork.conf /etc/apache2/mods-enabled/ \
+    && a2enmod rewrite
 
 # Install PHP dependencies via composer
 RUN composer install --no-dev --optimize-autoloader
