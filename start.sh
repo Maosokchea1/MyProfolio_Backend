@@ -37,4 +37,12 @@ php artisan storage:link --force
 # Run migration
 php artisan migrate --force || true
 
-apache2-foreground
+# ==========================================
+# FIX: Force fix Apache MPM conflict here
+# ==========================================
+rm -f /etc/apache2/mods-enabled/mpm_event.* /etc/apache2/mods-enabled/mpm_worker.*
+ln -sf /etc/apache2/mods-available/mpm_prefork.load /etc/apache2/mods-enabled/
+ln -sf /etc/apache2/mods-available/mpm_prefork.conf /etc/apache2/mods-enabled/
+
+# Start Apache
+exec apache2-foreground
