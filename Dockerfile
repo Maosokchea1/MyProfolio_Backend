@@ -31,12 +31,12 @@ RUN echo '<Directory /var/www/html/public>\n\
     Require all granted\n\
 </Directory>' >> /etc/apache2/apache2.conf
 
-# Expose port 8080 (Render requirement)
+# Expose port 8080 (Render/Railway requirement)
 ENV PORT=8080
 RUN sed -i 's/80/8080/g' /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
 
-# Enable Apache Rewrite Module
-RUN a2enmod rewrite
+# Fix Apache MPM conflict and Enable Rewrite Module
+RUN a2dismod mpm_event mpm_worker && a2enmod mpm_prefork && a2enmod rewrite
 
 # Install PHP dependencies via composer
 RUN composer install --no-dev --optimize-autoloader
